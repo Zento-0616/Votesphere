@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VoteSphere - Christmas Voting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            /* CHRISTMAS PALETTE */
+            --primary: #0f2027;   /* Winter Night */
+            --accent: #c0392b;    /* Holiday Red */
+            --success: #27ae60;   /* Christmas Green */
+            --danger: #e74c3c;
+            --warning: #f1c40f;   /* Gold */
+            --text-light: #ecf0f1;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            /* Winter Gradient Background */
+            background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            color: #2c3e50;
+        }
+
+        /* --- SNOWFALL ANIMATION --- */
+        .snowflake {
+            color: #fff;
+            font-size: 1.2em;
+            font-family: Arial;
+            text-shadow: 0 0 1px #000;
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            animation-name: snowflakes-fall, snowflakes-shake;
+            animation-duration: 10s, 3s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            pointer-events: none;
+        }
+        @keyframes snowflakes-fall { 0% { top: -10%; } 100% { top: 100%; } }
+        @keyframes snowflakes-shake { 0% { transform: translateX(0px); } 50% { transform: translateX(80px); } 100% { transform: translateX(0px); } }
+        .snowflake:nth-of-type(1) { left: 1%; animation-delay: 0s, 0s; }
+        .snowflake:nth-of-type(2) { left: 10%; animation-delay: 1s, 1s; }
+        .snowflake:nth-of-type(3) { left: 20%; animation-delay: 6s, .5s; }
+        .snowflake:nth-of-type(4) { left: 30%; animation-delay: 4s, 2s; }
+        .snowflake:nth-of-type(5) { left: 40%; animation-delay: 2s, 2s; }
+        .snowflake:nth-of-type(6) { left: 50%; animation-delay: 8s, 3s; }
+        .snowflake:nth-of-type(7) { left: 60%; animation-delay: 6s, 2s; }
+        .snowflake:nth-of-type(8) { left: 70%; animation-delay: 2.5s, 1s; }
+        .snowflake:nth-of-type(9) { left: 80%; animation-delay: 1s, 0s; }
+        .snowflake:nth-of-type(10) { left: 90%; animation-delay: 3s, 1.5s; }
+
+
+        /* --- MOBILE TOP HEADER --- */
+        .mobile-header {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%;
+            height: 60px;
+            background: rgba(192, 57, 43, 0.95); /* Red Header */
+            border-bottom: 2px solid #f1c40f;     /* Gold Border */
+            align-items: center; justify-content: space-between;
+            padding: 0 15px; box-sizing: border-box;
+            z-index: 200;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .mobile-brand { font-size: 20px; font-weight: bold; color: white; display: flex; align-items: center; gap: 10px; }
+        .menu-btn { background: none; border: none; font-size: 24px; color: white; cursor: pointer; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(15, 32, 39, 0.95); /* Dark Winter Theme */
+            border-right: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            overflow-y: auto;
+            z-index: 300;
+            transition: transform 0.3s ease;
+
+            /* HIDE SCROLLBAR */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .brand {
+            text-align: center; margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+        .brand h1 { margin: 5px 0 0 0; font-size: 22px; color: #f1c40f; text-shadow: 1px 1px 2px black; }
+
+        .brand-logo-img {
+            width: 100px; height: 100px; object-fit: contain;
+            padding: 5px; margin-bottom: 10px;
+            filter: drop-shadow(0 0 5px white); /* Frosty Glow */
+        }
+
+        .sidebar-section-title {
+            font-size: 16px; text-transform: uppercase;
+            color: #bdc3c7; font-weight: bold; margin-top: 15px; margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-list { list-style: none; padding: 0; margin-bottom: 20px; }
+        .sidebar-item { margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .pos-header { color: #f1c40f; font-weight: bold; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
+
+        .cand-mini {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 13px; color: #ecf0f1; padding: 2px 0;
+        }
+        .rank-badge {
+            background: #c0392b; color: white; /* Red Badge */
+            font-size: 10px; padding: 1px 6px; border-radius: 4px; margin-right: 5px; font-weight: bold;
+        }
+        .vote-count { color: #2ecc71; font-weight: bold; font-size: 11px; }
+
+        .actions { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+        .btn-logout {
+            background: rgba(192, 57, 43, 0.2);
+            color: #e74c3c; border: 1px solid #e74c3c;
+            padding: 10px; border-radius: 8px; font-weight: bold;
+            cursor: pointer; text-align: center; text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn-logout:hover { background: #c0392b; color: white; }
+
+        .overlay-bg {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 250;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1; height: 100vh; overflow-y: auto; position: relative;
+            padding-bottom: 80px; z-index: 10;
+        }
+
+        .timer-container {
+            position: sticky; top: 0;
+            background: rgba(255,255,255,0.9); /* Frosted Glass */
+            backdrop-filter: blur(5px);
+            z-index: 50;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 10px;
+            text-align: center; display: flex; justify-content: center; align-items: center; gap: 10px;
+            border-bottom: 2px solid #2ecc71;
+        }
+        .timer-text {
+            font-size: 20px; font-weight: bold; color: #c0392b;
+            background: #f4f6f7; padding: 5px 15px; border-radius: 20px;
+            border: 1px dashed #27ae60;
+        }
+
+        .voting-area { padding: 30px; max-width: 1200px; margin: 0 auto; } /* Increased width */
+        .header-msg h2 { color: white; margin: 0; text-shadow: 1px 1px 2px black; }
+        .header-msg p { color: #bdc3c7; margin-top: 5px; font-size: 14px; }
+
+        /* --- NEW LAYOUT: POSITIONS GRID --- */
+        .positions-grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 Columns of Position Cards */
+            gap: 25px; /* Spacing between cards */
+            margin-top: 20px;
+        }
+
+        .position-card {
+            background: var(--card-bg); border-radius: 12px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-top: 5px solid #c0392b; /* Red Top Border */
+            display: flex; flex-direction: column;
+        }
+        .pos-title {
+            color: #2c3e50; font-size: 18px; font-weight: 800;
+            text-transform: uppercase; margin-bottom: 15px; border-left: 4px solid #27ae60; padding-left: 10px;
+        }
+
+        /* --- CANDIDATE LIST (Vertical Stack inside Position Card) --- */
+        .candidate-list-stack {
+            display: flex;
+            flex-direction: column; /* Stack candidates vertically */
+            gap: 10px;
+        }
+
+        .candidate-option {
+            display: flex; align-items: center; padding: 10px;
+            border: 2px solid #e0e0e0; border-radius: 10px;
+            cursor: pointer; transition: 0.2s; position: relative;
+            background: white;
+        }
+        input[type="radio"] { display: none; }
+
+        /* Selected State: Green Christmas Glow */
+        .candidate-option:has(input:checked) {
+            border-color: #27ae60;
+            background: #eafaf1;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+        }
+        .candidate-option:has(input:checked)::after {
+            content: '🎄'; position: absolute; top: 50%; right: 15px; transform: translateY(-50%); font-size: 18px;
+        }
+
+        .candidate-img {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+            margin-right: 15px; border: 2px solid #c0392b; background: #eee;
+        }
+        .c-name { font-weight: bold; color: #333; font-size: 15px; display: block; }
+        .c-grade { font-size: 12px; color: #7f8c8d; }
+
+        /* --- BUTTONS --- */
+        .mobile-submit-container {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; padding: 15px; box-sizing: border-box;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 200;
+            display: none;
+            border-top: 2px solid #c0392b;
+        }
+        .desktop-submit-container { margin-top: 30px; text-align: right; }
+
+        .btn-vote {
+            background: linear-gradient(90deg, #c0392b, #f1c40f);
+            color: white; border: none; padding: 15px; width: 100%;
+            border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .btn-vote:active { transform: scale(0.98); }
+        .btn-vote:disabled { background: #95a5a6; cursor: not-allowed; }
+
+        /* --- BALLOT BOX ANIMATION --- */
+        #loadingOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 3000;
+            justify-content: center; align-items: center; flex-direction: column; color: white;
+        }
+
+        .ballot-box {
+            width: 80px; height: 70px; background: #c0392b;
+            position: absolute; bottom: 0; left: 20px;
+            border-radius: 4px; z-index: 10;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .ballot-box::after { content: '🎁'; font-size: 30px; }
+
+        .ballot-lid {
+            width: 100px; height: 15px; background: #27ae60;
+            position: absolute; top: 35px; left: 10px;
+            border-radius: 4px; z-index: 11;
+        }
+
+        .ballot-animation-container { position: relative; width: 120px; height: 120px; margin-bottom: 20px; }
+        .ballot-paper { width: 50px; height: 70px; background: white; position: absolute; left: 35px; top: -30px; border: 2px solid #bdc3c7; border-radius: 2px; z-index: 5; animation: slideVote 1.5s infinite ease-in-out; }
+        @keyframes slideVote { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(80px); opacity: 0; } }
+
+        /* --- RESPONSIVE CSS --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow-y: auto; }
+            .sidebar { position: fixed; top: 0; left: 0; height: 100%; transform: translateX(-100%); width: 280px; overflow-y: auto; }
+            .sidebar.active { transform: translateX(0); }
+            .overlay-bg.active { display: block; }
+            .mobile-header { display: flex; }
+            .timer-container { display: none; }
+            .mobile-timer { font-size: 16px; font-weight: bold; color: #f1c40f; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 15px; }
+            .main-content { height: auto; overflow: visible; padding-top: 60px; }
+            .voting-area { padding: 15px; padding-bottom: 100px; }
+            .desktop-submit-container { display: none; }
+            .mobile-submit-container { display: block; }
+
+            /* FORCE 1 COLUMN ON MOBILE for Positions */
+            .positions-grid-container { grid-template-columns: 1fr; gap: 15px; }
+        }
+
+        #successModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 3000;
+            justify-content: center; align-items: center; flex-direction: column; color: white;
+        }
+        .modal-content {
+            background: white; color: #333; padding: 30px; border-radius: 15px;
+            text-align: center; width: 85%; max-width: 400px;
+            border: 3px solid #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Snowflakes Layer -->
+    <div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❅</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header">
+        <div class="mobile-brand">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <span>🎄 VoteSphere</span>
+        </div>
+        <div class="mobile-timer" id="mobileTimer">--:--</div>
+    </div>
+
+    <div class="overlay-bg" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="brand">
+            <img src="{{ url_for('static', filename='logo.png') }}" class="brand-logo-img" alt="VoteSphere">
+            <h1>WELCOME 🎅</h1>
+        </div>
+
+        <div class="sidebar-section-title">Top 3 Candidates</div>
+
+        <ul class="sidebar-list">
+            {% for position, candidates in grouped_candidates.items() %}
+            <li class="sidebar-item">
+                <div class="pos-header">{{ position }}</div>
+                {% for c in candidates[:3] %}
+                <div class="cand-mini">
+                    <div style="display:flex; align-items:center;">
+                        <span class="rank-badge">{{ loop.index }}</span>
+                        {{ c['name'] }}
+                    </div>
+                    <span class="vote-count">{% if c['votes'] is defined %}{{ c['votes'] }}{% endif %} 0</span>
+                </div>
+                {% endfor %}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <div class="actions">
+            <a href="#" onclick="confirmLogout()" class="btn-logout">LOGOUT</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content" id="mainContainer">
+
+        <div class="timer-container" id="desktopTimerBox">
+            <span style="color:#c0392b; font-weight:bold;">⏳ Time Left:</span>
+            <div class="timer-text" id="desktopTimer">--:--:--</div>
+        </div>
+
+        <div class="voting-area">
+            <div class="header-msg">
+                <h2>Hello, {{ voter_name }} ❄️</h2>
+                <p>Please select <b>ONE</b> candidate per position.</p>
+            </div>
+
+            <form id="voteForm">
+                <!-- GRID CONTAINER FOR POSITIONS -->
+                <div class="positions-grid-container">
+                    {% for position, candidates in grouped_candidates.items() %}
+                    <div class="position-card">
+                        <div class="pos-title">🎁 {{ position }}</div>
+
+                        <!-- STACK CANDIDATES VERTICALLY IN EACH CARD -->
+                        <div class="candidate-list-stack">
+                            {% for c in candidates %}
+                            <label class="candidate-option">
+                                <input type="radio" name="{{ position }}" value="{{ c['id'] }}" data-name="{{ c['name'] }}" required>
+
+                                <img src="{{ url_for('get_candidate_image', candidate_id=c['id']) }}"
+                                     class="candidate-img" alt="Photo" loading="lazy">
+
+                                <div class="c-info">
+                                    <span class="c-name">{{ c['name'] }}</span>
+                                    <span class="c-grade">{{ c['grade'] }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </form>
+
+            <div class="desktop-submit-container">
+                <button class="btn-vote" style="width: 200px;" onclick="processVote()">SUBMIT VOTE 🎄</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-submit-container">
+        <button class="btn-vote" id="mobileSubmitBtn" onclick="processVote()">SUBMIT VOTE 🎄</button>
+    </div>
+
+    <!-- ANIMATION OVERLAY -->
+    <div id="loadingOverlay">
+        <div class="ballot-animation-container">
+            <div class="ballot-paper"></div>
+            <div class="ballot-lid"></div>
+            <div class="ballot-box"></div>
+        </div>
+        <h2>Submitting Vote...</h2>
+        <p>Please wait while we secure your ballot.</p>
+    </div>
+
+    <div id="successModal">
+        <div class="modal-content">
+            <!-- DYNAMIC RECEIPT CONTENT WILL BE INJECTED HERE -->
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.overlay-bg').classList.toggle('active');
+        }
+
+        let heartbeatInterval;
+        function sendHeartbeat() { fetch('/heartbeat', { method: 'POST' }); }
+        heartbeatInterval = setInterval(sendHeartbeat, 5000);
+
+        function confirmLogout() {
+            if(confirm("Are you sure you want to logout?")) {
+                clearInterval(heartbeatInterval);
+                window.location.href = "/logout";
+            }
+        }
+        function attemptLogout() {
+            if(confirm("Do you really want to log out without taking a photo?")) {
+                clearInterval(heartbeatInterval);
+                window.location.href = "/logout";
+            }
+        }
+
+        let timeLeft = {{ remaining_seconds | int }};
+        const desktopTimer = document.getElementById("desktopTimer");
+        const desktopBox = document.getElementById("desktopTimerBox");
+        const mobileTimer = document.getElementById("mobileTimer");
+
+        function updateTimer() {
+            if (timeLeft < 0) { endElection(); return; }
+
+            const days = Math.floor(timeLeft / 86400);
+            const hours = Math.floor((timeLeft % 86400) / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = Math.floor(timeLeft % 60);
+
+            let display = "";
+            if (days > 0) display += days + "d ";
+            display += (hours < 10 ? "0"+hours : hours) + ":";
+            display += (minutes < 10 ? "0"+minutes : minutes) + ":";
+            display += (seconds < 10 ? "0"+seconds : seconds);
+
+            desktopTimer.innerText = display;
+            mobileTimer.innerText = display;
+            timeLeft--;
+        }
+
+        function endElection() {
+            desktopTimer.innerText = "CLOSED";
+            mobileTimer.innerText = "CLOSED";
+            document.querySelectorAll('.btn-vote').forEach(btn => {
+                btn.disabled = true;
+                btn.innerText = "TIME UP";
+                btn.style.background = "#7f8c8d";
+            });
+            document.getElementById("mainContainer").style.opacity = "0.5";
+            document.getElementById("mainContainer").style.pointerEvents = "none";
+            if(!window.alerted) { alert("Time is up!"); window.alerted = true; }
+        }
+
+        if (timeLeft >= 0) { setInterval(updateTimer, 1000); updateTimer(); }
+        else { endElection(); }
+
+        // --- SUBMISSION LOGIC WITH RECEIPT ---
+        function processVote() {
+            const form = document.getElementById('voteForm');
+
+            // 1. Validation
+            const positions = [...new Set([...form.querySelectorAll('input[type="radio"]')].map(i => i.name))];
+            const missing = [];
+            const selectedSummary = [];
+
+            positions.forEach(pos => {
+                const selected = form.querySelector(`input[name="${pos}"]:checked`);
+                if (!selected) {
+                    missing.push(pos);
+                } else {
+                    const candName = selected.getAttribute('data-name');
+                    selectedSummary.push(`• ${pos}: ${candName}`);
+                }
+            });
+
+            if (missing.length > 0) {
+                alert("⚠️ Missing Votes!\n\nPlease select a candidate for:\n\n" + missing.map(p => "- " + p).join("\n"));
+                return;
+            }
+
+            const confirmMsg = "Confirm Your Votes:\n\n" + selectedSummary.join("\n") + "\n\nClick OK to submit.";
+            if (!confirm(confirmMsg)) return;
+
+            clearInterval(heartbeatInterval);
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            setTimeout(() => {
+                const formData = new FormData(form);
+                fetch('/vote', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    if (data.status === "success") {
+                        const receiptHtml = selectedSummary.map(s => `<div style='text-align:left; margin:5px 0; border-bottom:1px solid #eee; padding:5px; font-size:14px;'>${s}</div>`).join("");
+
+                        document.querySelector('#successModal .modal-content').innerHTML = `
+                            <div style="font-size: 50px; margin-bottom: 10px;">🎄</div>
+                            <h2 style="color:#27ae60; margin:0;">Vote Submitted!</h2>
+                            <p style="color:#e74c3c; font-weight:bold; background:#fadbd8; padding:8px; border-radius:5px; font-size:13px;">📸 Please take a screenshot!</p>
+                            <div style="max-height:200px; overflow-y:auto; background:#f9f9f9; padding:10px; border-radius:8px; margin:10px 0; border:1px solid #ddd;">
+                                ${receiptHtml}
+                            </div>
+                            <button class="btn-vote" style="background: #34495e; margin-top:10px;" onclick="attemptLogout()">LOGOUT</button>
+                        `;
+                        document.getElementById('successModal').style.display = 'flex';
+                    } else {
+                        alert("Error: " + data.message);
+                        window.location.href = "/";
+                    }
+                })
+                .catch(e => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    alert("Connection error.");
+                });
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

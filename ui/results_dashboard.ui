@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>ResultsDashboard</class>
+ <widget class="QMainWindow" name="ResultsDashboard">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>980</width><height>650</height></rect></property>
+  <property name="windowTitle"><string>VoteSphere - Results Dashboard</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="vMain">
+    <item>
+     <layout class="QHBoxLayout" name="topRow">
+      <item><widget class="QLabel" name="labelTitle"><property name="text"><string>VOTE SPHERE - Live Results</string></property></widget></item>
+      <item><spacer name="topSpacer"><property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer></item>
+      <item><widget class="QPushButton" name="btnExport"><property name="text"><string>Export</string></property></widget></item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="resultsRow">
+      <item>
+       <widget class="QTableWidget" name="tableResults">
+        <property name="columnCount"><number>3</number></property>
+        <property name="rowCount"><number>3</number></property>
+        <column><property name="text"><string>Candidate</string></property></column>
+        <column><property name="text"><string>Votes</string></property></column>
+        <column><property name="text"><string>Percentage</string></property></column>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frameCharts">
+        <layout class="QVBoxLayout" name="chartsLayout">
+         <item><widget class="QLabel" name="labelPie"><property name="text"><string>[Pie Chart Placeholder]</string></property></widget></item>
+         <item><widget class="QLabel" name="labelBar"><property name="text"><string>[Bar Chart Placeholder]</string></property></widget></item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item><widget class="QLabel" name="labelUpdated"><property name="text"><string>Last updated: --</string></property></widget></item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" /><widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <resources />
+ <connections />
+</ui>

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>ManageCandidates</class>
+ <widget class="QMainWindow" name="ManageCandidates">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>900</width><height>600</height></rect></property>
+  <property name="windowTitle"><string>VoteSphere - Manage Candidates</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="mainV">
+    <item>
+     <layout class="QHBoxLayout" name="topRow">
+      <item><widget class="QPushButton" name="btnBack"><property name="text"><string>← Back</string></property></widget></item>
+      <item><spacer name="topRowSpacer"><property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer></item>
+      <item><widget class="QPushButton" name="btnAddCandidate"><property name="text"><string>+ ADD CANDIDATE</string></property></widget></item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="tableCandidates">
+      <property name="columnCount"><number>4</number></property>
+      <property name="rowCount"><number>0</number></property>
+      <column>
+       <property name="text"><string>ID</string></property>
+      </column>
+      <column>
+       <property name="text"><string>Name</string></property>
+      </column>
+      <column>
+       <property name="text"><string>Position</string></property>
+      </column>
+      <column>
+       <property name="text"><string>Actions</string></property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" /><widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <resources />
+ <connections />
+</ui>

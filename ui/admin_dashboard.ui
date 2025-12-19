@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>AdminDashboard</class>
+ <widget class="QMainWindow" name="AdminDashboard">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>1000</width><height>700</height></rect></property>
+  <property name="windowTitle"><string>VoteSphere - Admin Dashboard</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="mainLayout">
+    <item>
+     <widget class="QFrame" name="frameSidebar">
+      <property name="minimumSize"><size><width>200</width><height>0</height></size></property>
+      <layout class="QVBoxLayout" name="sidebarLayout">
+       <item><widget class="QLabel" name="labelMenuTitle"><property name="text"><string>Menu</string></property></widget></item>
+       <item><widget class="QPushButton" name="btnDashboard"><property name="text"><string>Dashboard</string></property></widget></item>
+       <item><widget class="QPushButton" name="btnCandidates"><property name="text"><string>Candidates</string></property></widget></item>
+       <item><widget class="QPushButton" name="btnVoters"><property name="text"><string>Voters</string></property></widget></item>
+       <item><widget class="QPushButton" name="btnResults"><property name="text"><string>Results</string></property></widget></item>
+       <item><widget class="QPushButton" name="btnSettings"><property name="text"><string>Settings</string></property></widget></item>
+       <item><spacer name="sideSpacer"><property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer></item>
+       <item><widget class="QPushButton" name="btnLogout"><property name="text"><string>Logout</string></property></widget></item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="mainContent">
+      <layout class="QVBoxLayout" name="contentLayout">
+       <item>
+        <layout class="QHBoxLayout" name="topStats">
+         <item><widget class="QFrame" name="frameTotalVoters"><layout class="QVBoxLayout"><item><widget class="QLabel" name="labelTotalVoters"><property name="text"><string>Total Voters</string></property></widget></item><item><widget class="QLabel" name="valueTotalVoters"><property name="text"><string>1,248</string></property></widget></item></layout></widget></item>
+         <item><widget class="QFrame" name="frameVotesCast"><layout class="QVBoxLayout"><item><widget class="QLabel" name="labelVotesCast"><property name="text"><string>Votes Cast</string></property></widget></item><item><widget class="QLabel" name="valueVotesCast"><property name="text"><string>892</string></property></widget></item></layout></widget></item>
+         <item><widget class="QFrame" name="frameStatus"><layout class="QVBoxLayout"><item><widget class="QLabel" name="labelStatus"><property name="text"><string>Status</string></property></widget></item><item><widget class="QLabel" name="valueStatus"><property name="text"><string>LIVE</string></property></widget></item></layout></widget></item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="controlsRow">
+         <item><widget class="QPushButton" name="btnStart"><property name="text"><string>START ELECTION</string></property></widget></item>
+         <item><widget class="QPushButton" name="btnStop"><property name="text"><string>STOP ELECTION</string></property></widget></item>
+         <item><widget class="QPushButton" name="btnExport"><property name="text"><string>EXPORT RESULTS</string></property></widget></item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" /><widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <resources />
+ <connections />
+</ui>

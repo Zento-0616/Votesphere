@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>AuditTrail</class>
+ <widget class="QMainWindow" name="AuditTrail">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>900</width><height>600</height></rect></property>
+  <property name="windowTitle"><string>VoteSphere - Audit Trail</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="vMain">
+    <item>
+     <layout class="QHBoxLayout" name="topRow">
+      <item><widget class="QLabel" name="labelTitle"><property name="text"><string>Activity Log</string></property></widget></item>
+      <item><spacer name="topSpacer"><property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer></item>
+      <item><widget class="QPushButton" name="btnExport"><property name="text"><string>Export</string></property></widget></item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="tableLog">
+      <property name="columnCount"><number>3</number></property>
+      <property name="rowCount"><number>0</number></property>
+      <column><property name="text"><string>Time</string></property></column>
+      <column><property name="text"><string>User</string></property></column>
+      <column><property name="text"><string>Action</string></property></column>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="searchRow">
+      <item><widget class="QLineEdit" name="lineEditSearch"><property name="placeholderText"><string>Search...</string></property></widget></item>
+      <item><widget class="QPushButton" name="btnSearch"><property name="text"><string>Search</string></property></widget></item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" /><widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <resources />
+ <connections />
+</ui>

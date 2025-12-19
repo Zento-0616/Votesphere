@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VoteSphere Mobile - Christmas Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: url("{{ url_for('static', filename='background2.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; margin: 0;
+            overflow: hidden;
+        }
+
+        /* --- SNOWFALL ANIMATION --- */
+        .snowflake {
+            color: #fff;
+            font-size: 1.5em;
+            font-family: Arial;
+            text-shadow: 0 0 1px #000;
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            user-select: none;
+            cursor: default;
+            animation-name: snowflakes-fall, snowflakes-shake;
+            animation-duration: 8s, 2s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            pointer-events: none;
+        }
+        @keyframes snowflakes-fall {
+            0% { top: -10%; }
+            100% { top: 100%; }
+        }
+        @keyframes snowflakes-shake {
+            0% { transform: translateX(0px); }
+            50% { transform: translateX(80px); }
+            100% { transform: translateX(0px); }
+        }
+        /* Randomize Snow */
+        .snowflake:nth-of-type(1) { left: 1%; animation-delay: 0s, 0s; }
+        .snowflake:nth-of-type(2) { left: 10%; animation-delay: 1s, 1s; }
+        .snowflake:nth-of-type(3) { left: 20%; animation-delay: 6s, .5s; }
+        .snowflake:nth-of-type(4) { left: 30%; animation-delay: 4s, 2s; }
+        .snowflake:nth-of-type(5) { left: 40%; animation-delay: 2s, 2s; }
+        .snowflake:nth-of-type(6) { left: 50%; animation-delay: 8s, 3s; }
+        .snowflake:nth-of-type(7) { left: 60%; animation-delay: 6s, 2s; }
+        .snowflake:nth-of-type(8) { left: 70%; animation-delay: 2.5s, 1s; }
+        .snowflake:nth-of-type(9) { left: 80%; animation-delay: 1s, 0s; }
+        .snowflake:nth-of-type(10) { left: 90%; animation-delay: 3s, 1.5s; }
+
+        /* --- SNAKE BORDER CONTAINER --- */
+        .card {
+            position: relative;
+            width: 80%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 5px; /* Thicker border for candy cane effect */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+
+        /* --- THE CHRISTMAS SNAKE ANIMATION --- */
+        .card::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            /* Red -> White -> Green -> White -> Red */
+            background: conic-gradient(
+                from 0deg,
+                transparent 0%,
+                transparent 55%,
+                #ff0000 65%,  /* Red Tail */
+                #ffffff 75%,  /* White */
+                #00ff00 85%,  /* Green */
+                #ffffff 95%,  /* White */
+                #ff0000 100%  /* Red Head */
+            );
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- CONTENT CARD --- */
+        .card-content {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 18px;
+            padding: 30px;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .logo-img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        h1 { margin-top: 0; margin-bottom: 5px; font-size: 28px; letter-spacing: 2px; color: #f1c40f; text-shadow: 1px 1px 2px #000; }
+        h3 { margin-top: 0; color: #ccc; font-weight: normal; font-size: 16px; margin-bottom: 25px; }
+
+        .input-label {
+            text-align: left;
+            width: 100%;
+            margin: 10px 0 5px 0;
+            color: #bdc3c7;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%; padding: 15px; margin: 0 0 10px 0;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus {
+            border: 1px solid #2ecc71;
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* --- CHRISTMAS BUTTON --- */
+        button {
+            width: 100%; padding: 15px; margin-top: 15px;
+            /* Festive Gradient: Red to Gold */
+            background: linear-gradient(90deg, #c0392b, #f1c40f);
+            color: white;
+            border: none; border-radius: 8px;
+            font-size: 18px; font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: transform 0.1s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .msg { padding: 12px; border-radius: 8px; margin-bottom: 10px; font-weight: bold; font-size: 14px; text-align: center; }
+
+        .error {
+            background: rgba(192, 57, 43, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+        .error::before { content: '🎅 '; }
+
+        .success {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+        .success::before { content: '🎄 '; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Snowflakes Layer -->
+    <div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❅</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+    <div class="snowflake">❄</div>
+
+    <div class="card">
+        <div class="card-content">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo-img">
+
+            <div style="font-size: 24px; margin-bottom: -5px;">Welcome</div>
+            <h1>MERRY CHRISTMAS</h1>
+            <h3>Voting Portal</h3>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="msg {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="input-label">Student ID:</div>
+                <input type="text" name="username" placeholder="Enter Student ID ❄️" required
+                       inputmode="numeric"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+                <div class="input-label">Password:</div>
+                <input type="password" name="password" placeholder="Enter Password 🔑" required
+                       inputmode="numeric"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+                <button type="submit">LOGIN</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

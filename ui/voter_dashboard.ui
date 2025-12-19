@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui version="4.0">
+ <class>VoterDashboard</class>
+ <widget class="QMainWindow" name="VoterDashboard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>VoteSphere - Voter Dashboard</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayoutMain">
+    <item>
+     <layout class="QHBoxLayout" name="topBar">
+      <item>
+       <widget class="QPushButton" name="pushButtonBack">
+        <property name="text">
+         <string>← Back</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="topBarSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       <property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelHeader">
+        <property name="text">
+         <string>VOTE SPHERE - Cast Your Vote</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="topBarSpacer2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       <property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelElection">
+        <property name="text">
+         <string>Election: 2025</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBoxPosition">
+      <property name="title">
+       <string>Position: PRESIDENT</string>
+      </property>
+      <layout class="QVBoxLayout" name="positionLayout">
+       <item>
+        <widget class="QScrollArea" name="scrollAreaCandidates">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <layout class="QVBoxLayout" name="candidatesListLayout">
+
+           
+           <item>
+            <widget class="QFrame" name="frameCandidate1">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <layout class="QHBoxLayout" name="candidate1Layout">
+              <item>
+               <widget class="QCheckBox" name="checkBoxCand1" />
+              </item>
+              <item>
+               <widget class="QLabel" name="labelPhoto1">
+                <property name="text">
+                 <string>[Photo]</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="cand1Info">
+                <item>
+                 <widget class="QLabel" name="labelName1">
+                  <property name="text">
+                   <string>Juan Dela Cruz</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="labelGrade1">
+                  <property name="text">
+                   <string>Grade 12 - STEM</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+
+           
+           <item>
+            <widget class="QFrame" name="frameCandidate2">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <layout class="QHBoxLayout" name="candidate2Layout">
+              <item>
+               <widget class="QCheckBox" name="checkBoxCand2" />
+              </item>
+              <item>
+               <widget class="QLabel" name="labelPhoto2">
+                <property name="text">
+                 <string>[Photo]</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="cand2Info">
+                <item>
+                 <widget class="QLabel" name="labelName2">
+                  <property name="text">
+                   <string>Maria Santos</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="labelGrade2">
+                  <property name="text">
+                   <string>Grade 11 - ABM</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+
+           
+           <item>
+            <widget class="QFrame" name="frameCandidate3">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <layout class="QHBoxLayout" name="candidate3Layout">
+              <item>
+               <widget class="QCheckBox" name="checkBoxCand3" />
+              </item>
+              <item>
+               <widget class="QLabel" name="labelPhoto3">
+                <property name="text">
+                 <string>[Photo]</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="cand3Info">
+                <item>
+                 <widget class="QLabel" name="labelName3">
+                  <property name="text">
+                   <string>Pedro Penduko</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="labelGrade3">
+                  <property name="text">
+                   <string>Grade 10</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+
+          </layout>
+         </widget>
+        </widget>
+       </item>
+
+       <item>
+        <layout class="QHBoxLayout" name="submitRow">
+         <item>
+          <spacer name="submitLeftSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          <property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonSubmit">
+           <property name="text">
+            <string>SUBMIT VOTE</string>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>160</width>
+             <height>44</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+             QPushButton {{
+               background: #2ECC71;
+               color: white;
+               border-radius: 8px;
+               font-weight: 600;
+             }}
+            </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="submitRightSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          <property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer>
+         </item>
+        </layout>
+       </item>
+
+       <item>
+        <widget class="QLabel" name="labelNote">
+         <property name="text">
+          <string>Once submitted, you cannot vote again.</string>
+         </property>
+        </widget>
+       </item>
+
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" />
+  <widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <resources />
+ <connections />
+</ui>
