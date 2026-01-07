@@ -1,3 +1,5 @@
+import os
+import sys
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QLabel, QTableWidget, QTableWidgetItem, QHeaderView,
                              QInputDialog, QMessageBox, QDialog, QFormLayout, QLineEdit,
@@ -101,18 +103,11 @@ class AddVoterDialog(QDialog):
         self.save_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self.save_btn.setStyleSheet("""
             QPushButton {
-                background: #27ae60;
-                color: white;
-                padding: 12px;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 14px;
+                background: #27ae60; color: white; padding: 12px;
+                border-radius: 8px; font-weight: bold; font-size: 14px;
                 border: 1px solid rgba(255,255,255,0.2);
             }
-            QPushButton:hover {
-                background: #2ecc71;
-                margin-top: -2px;
-            }
+            QPushButton:hover { background: #2ecc71; margin-top: -2px; }
         """)
         self.save_btn.clicked.connect(self.accept)
         btn_layout.addWidget(self.save_btn)
@@ -121,17 +116,11 @@ class AddVoterDialog(QDialog):
         self.cancel_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self.cancel_btn.setStyleSheet("""
             QPushButton {
-                background: rgba(231, 76, 60, 0.8);
-                color: white;
-                padding: 12px;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 14px;
-                border: 1px solid rgba(255,255,255,0.2);
+                background: rgba(231, 76, 60, 0.8); color: white;
+                padding: 12px; border-radius: 8px; font-weight: bold;
+                font-size: 14px; border: 1px solid rgba(255,255,255,0.2);
             }
-            QPushButton:hover {
-                background: #e74c3c;
-            }
+            QPushButton:hover { background: #e74c3c; }
         """)
         self.cancel_btn.clicked.connect(self.reject)
         btn_layout.addWidget(self.cancel_btn)
@@ -170,11 +159,7 @@ class EditVoterDialog(QDialog):
                     stop:1 #4ca1af
                 );
             }
-            QLabel {
-                color: white;
-                font-weight: bold;
-                font-size: 14px;
-            }
+            QLabel { color: white; font-weight: bold; font-size: 14px; }
         """)
 
         layout = QVBoxLayout(self)
@@ -191,27 +176,21 @@ class EditVoterDialog(QDialog):
 
         input_style = """
             QLineEdit {
-                background: rgba(0,0,0,0.4); 
-                border: 1px solid rgba(255,255,255,0.3);
-                border-radius: 5px;
-                padding: 8px;
-                color: white;
-                font-size: 14px;
+                background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.3);
+                border-radius: 5px; padding: 8px; color: white; font-size: 14px;
             }
-            QLineEdit:focus {
-                border: 2px solid #3498db;
-            }
+            QLineEdit:focus { border: 2px solid #3498db; }
         """
 
         self.username_input = QLineEdit()
-        self.username_input.setText(self.voter_data[1])
+        self.username_input.setText(str(self.voter_data[1]))
         self.username_input.setStyleSheet(input_style)
         id_validator = QRegularExpressionValidator(QRegularExpression("[0-9]*"))
         self.username_input.setValidator(id_validator)
         form_layout.addRow("Official ID:", self.username_input)
 
         self.full_name_input = QLineEdit()
-        self.full_name_input.setText(self.voter_data[2])
+        self.full_name_input.setText(str(self.voter_data[2]))
         self.full_name_input.setStyleSheet(input_style)
         name_validator = QRegularExpressionValidator(QRegularExpression("[a-zA-Z ]*"))
         self.full_name_input.setValidator(name_validator)
@@ -219,12 +198,12 @@ class EditVoterDialog(QDialog):
         form_layout.addRow("Full Name:", self.full_name_input)
 
         self.grade_input = QLineEdit()
-        self.grade_input.setText(self.voter_data[3])
+        self.grade_input.setText(str(self.voter_data[3]))
         self.grade_input.setStyleSheet(input_style)
         form_layout.addRow("Grade:", self.grade_input)
 
         self.section_input = QLineEdit()
-        self.section_input.setText(self.voter_data[4])
+        self.section_input.setText(str(self.voter_data[4]))
         self.section_input.setStyleSheet(input_style)
         self.section_input.textEdited.connect(lambda text: self.auto_capitalize(self.section_input, text))
         form_layout.addRow("Section:", self.section_input)
@@ -253,16 +232,10 @@ class EditVoterDialog(QDialog):
     def get_btn_style(self, color, hover_color):
         return f"""
             QPushButton {{
-                background: {color};
-                color: white;
-                padding: 10px 20px;
-                border-radius: 6px;
-                font-weight: bold;
-                border: 2px solid rgba(255,255,255,0.3);
+                background: {color}; color: white; padding: 10px 20px;
+                border-radius: 6px; font-weight: bold; border: 2px solid rgba(255,255,255,0.3);
             }}
-            QPushButton:hover {{
-                background: {hover_color};
-            }}
+            QPushButton:hover {{ background: {hover_color}; }}
         """
 
     def save_changes(self):
@@ -275,14 +248,16 @@ class EditVoterDialog(QDialog):
             QMessageBox.warning(self, "Error", "Username and Full Name are required!")
             return
 
+        cursor = None
         try:
-            cursor = self.db.conn.cursor()
-            cursor.execute("SELECT id FROM users WHERE username=? AND id!=?", (username, self.voter_data[0]))
+            # --- MYSQL FIX: Buffered cursor and placeholder %s ---
+            cursor = self.db.conn.cursor(buffered=True)
+            cursor.execute("SELECT id FROM users WHERE username=%s AND id!=%s", (username, self.voter_data[0]))
             if cursor.fetchone():
                 QMessageBox.warning(self, "Error", "Username already exists!")
                 return
 
-            cursor.execute("SELECT id FROM users WHERE UPPER(full_name)=UPPER(?) AND id!=?",
+            cursor.execute("SELECT id FROM users WHERE UPPER(full_name)=UPPER(%s) AND id!=%s",
                            (full_name, self.voter_data[0]))
             if cursor.fetchone():
                 QMessageBox.warning(self, "Error", "A voter with this Full Name already exists!")
@@ -290,12 +265,8 @@ class EditVoterDialog(QDialog):
 
             cursor.execute("""
                            UPDATE users
-                           SET username=?,
-                               password=?,
-                               full_name=?,
-                               grade=?,
-                               section=?
-                           WHERE id = ?
+                           SET username=%s, password=%s, full_name=%s, grade=%s, section=%s
+                           WHERE id = %s
                            """, (username, username, full_name, grade, section, self.voter_data[0]))
 
             self.db.conn.commit()
@@ -304,6 +275,8 @@ class EditVoterDialog(QDialog):
             self.accept()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to update voter: {str(e)}")
+        finally:
+            if cursor: cursor.close()
 
 
 class ManageVoters(QWidget):
@@ -331,23 +304,16 @@ class ManageVoters(QWidget):
         add_btn = QPushButton("➕ ADD VOTER")
         add_btn.setStyleSheet("""
             QPushButton {
-                background: #27ae60;
-                color: white;
-                padding: 12px 25px;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 14px;
+                background: #27ae60; color: white; padding: 12px 25px;
+                border-radius: 8px; font-weight: bold; font-size: 14px;
                 border: 2px solid rgba(255,255,255,0.3);
             }
-            QPushButton:hover {
-                background: #219955;
-            }
+            QPushButton:hover { background: #219955; }
         """)
         add_btn.clicked.connect(self.add_voter)
         top_layout.addWidget(add_btn)
         top_layout.addStretch()
         layout.addLayout(top_layout)
-
 
         filter_layout = QHBoxLayout()
         filter_layout.setSpacing(15)
@@ -355,46 +321,27 @@ class ManageVoters(QWidget):
         # Filter Section
         filter_style = """
             QLineEdit, QComboBox {
-                background: rgba(0, 0, 0, 0.15);
-                color: white;
+                background: rgba(0, 0, 0, 0.15); color: white;
                 border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 8px;
-                padding: 5px 15px;
-                font-size: 14px;
-                font-weight: bold;
-                height: 45px; 
+                border-radius: 8px; padding: 5px 15px;
+                font-size: 14px; font-weight: bold; height: 45px; 
             }
-            QLineEdit:focus, QComboBox:focus {
-                border: 2px solid #3498db;
-                background: rgba(255, 255, 255, 0.2);
-            }
-            QComboBox::drop-down {
-                border: 0px;
-                margin-right: 10px;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #34495e;
-                color: white;
-                selection-background-color: #3498db;
-                border: 1px solid white;
-            }
+            QLineEdit:focus, QComboBox:focus { border: 2px solid #3498db; background: rgba(255, 255, 255, 0.2); }
+            QComboBox QAbstractItemView { background-color: #34495e; color: white; selection-background-color: #3498db; border: 1px solid white; }
         """
 
-        # Search Bar
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText("🔍 Search by Name or ID...")
         self.search_input.setStyleSheet(filter_style)
         self.search_input.textChanged.connect(self.load_voters)
         filter_layout.addWidget(self.search_input, 2)
 
-        # Grade Filter
         self.grade_filter = QComboBox()
         self.grade_filter.setStyleSheet(filter_style)
         self.grade_filter.addItem("All Grades")
         self.grade_filter.currentTextChanged.connect(self.load_voters)
         filter_layout.addWidget(self.grade_filter, 1)
 
-        # Section Filter
         self.section_filter = QComboBox()
         self.section_filter.setStyleSheet(filter_style)
         self.section_filter.addItem("All Sections")
@@ -407,52 +354,28 @@ class ManageVoters(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(6)
         self.table.setHorizontalHeaderLabels(["Student ID", "Full Name", "Grade", "Section", "Voted", "Actions"])
-
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.table.verticalHeader().setDefaultSectionSize(60)
 
-        # Sizing
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
-
         header.setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)
         self.table.setColumnWidth(5, 180)
 
-        header.setMinimumSectionSize(150)
-
-        # Table Design
         self.table.setStyleSheet("""
             QTableWidget {
-                background: rgba(0,0,0,0.15);  
-                border: 2px solid rgba(255,255,255,0.25);
-                border-radius: 15px;
-                gridline-color: rgba(255,255,255,0.25);
-                color: white;
+                background: rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.25);
+                border-radius: 15px; gridline-color: rgba(255,255,255,0.25); color: white;
             }
-            QHeaderView::section {
-                background: rgba(0,0,0,0.1); 
-                color: white;
-                padding: 10px;
-                border: none;
-                font-weight: bold;
-                border-radius: 5px;
-            }
-            QTableWidget::item {
-                background: rgba(0,0,0,0.2);  
-                padding: 10px;
-                border-bottom: 1px solid rgba(255,255,255,0.15);
-                color: white;
-            }
-            QTableWidget::item:selected {
-                background: rgba(52, 152, 219, 0.35); 
-                color: white;
-            }
+            QHeaderView::section { background: rgba(0,0,0,0.1); color: white; padding: 10px; border: none; font-weight: bold; }
+            QTableWidget::item { background: rgba(0,0,0,0.2); padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.15); color: white; }
+            QTableWidget::item:selected { background: rgba(52, 152, 219, 0.35); color: white; }
         """)
         layout.addWidget(self.table)
 
@@ -462,25 +385,20 @@ class ManageVoters(QWidget):
         self.voted_count_label = QLabel("Voted: 0")
         self.pending_count_label = QLabel("Pending: 0")
 
-        for label in [self.total_voters_label, self.voted_count_label, self.pending_count_label]:
-            label.setStyleSheet("""
-                color: white; font-weight: bold; font-size: 14px;
-                background: rgba(255,255,255,0.15); padding: 10px 15px;
-                border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);
-            """)
+        for lbl in [self.total_voters_label, self.voted_count_label, self.pending_count_label]:
+            lbl.setStyleSheet(
+                "color: white; font-weight: bold; font-size: 14px; background: rgba(255,255,255,0.15); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);")
+            stats_layout.addWidget(lbl)
 
-        stats_layout.addWidget(self.total_voters_label)
-        stats_layout.addWidget(self.voted_count_label)
-        stats_layout.addWidget(self.pending_count_label)
         stats_layout.addStretch()
         layout.addLayout(stats_layout)
 
     def update_filter_options(self):
+        cursor = None
         try:
-            cursor = self.db.conn.cursor()
-
-            current_grade = self.grade_filter.currentText()
-            current_section = self.section_filter.currentText()
+            cursor = self.db.conn.cursor(buffered=True)
+            cur_g = self.grade_filter.currentText()
+            cur_s = self.section_filter.currentText()
 
             self.grade_filter.blockSignals(True)
             self.section_filter.blockSignals(True)
@@ -488,100 +406,86 @@ class ManageVoters(QWidget):
             self.grade_filter.clear()
             self.grade_filter.addItem("All Grades")
             cursor.execute("SELECT DISTINCT grade FROM users WHERE role='voter' ORDER BY grade ASC")
-            grades = cursor.fetchall()
-            for g in grades:
-                if g[0]: self.grade_filter.addItem(g[0])
+            for g in cursor.fetchall():
+                if g[0]: self.grade_filter.addItem(str(g[0]))
 
             self.section_filter.clear()
             self.section_filter.addItem("All Sections")
             cursor.execute("SELECT DISTINCT section FROM users WHERE role='voter' ORDER BY section ASC")
-            sections = cursor.fetchall()
-            for s in sections:
-                if s[0]: self.section_filter.addItem(s[0])
+            for s in cursor.fetchall():
+                if s[0]: self.section_filter.addItem(str(s[0]))
 
-            index_g = self.grade_filter.findText(current_grade)
-            if index_g >= 0:
-                self.grade_filter.setCurrentIndex(index_g)
-            else:
-                self.grade_filter.setCurrentIndex(0)
-
-            index_s = self.section_filter.findText(current_section)
-            if index_s >= 0:
-                self.section_filter.setCurrentIndex(index_s)
-            else:
-                self.section_filter.setCurrentIndex(0)
-
+            idx_g = self.grade_filter.findText(cur_g)
+            self.grade_filter.setCurrentIndex(idx_g if idx_g >= 0 else 0)
+            idx_s = self.section_filter.findText(cur_s)
+            self.section_filter.setCurrentIndex(idx_s if idx_s >= 0 else 0)
 
             self.grade_filter.blockSignals(False)
             self.section_filter.blockSignals(False)
-
         except Exception as e:
             print(f"Error updating filters: {e}")
+        finally:
+            if cursor: cursor.close()
 
     def load_voters(self):
+        cursor = None
         try:
-            cursor = self.db.conn.cursor()
-
+            cursor = self.db.conn.cursor(buffered=True)
             query = "SELECT id, username, full_name, grade, section, voted FROM users WHERE role = 'voter'"
             params = []
 
             search_text = self.search_input.text().strip()
             if search_text:
-                query += " AND (full_name LIKE ? OR username LIKE ?)"
+                # --- MYSQL FIX: Placeholder %s ---
+                query += " AND (full_name LIKE %s OR username LIKE %s)"
                 params.extend([f"%{search_text}%", f"%{search_text}%"])
 
             grade_sel = self.grade_filter.currentText()
             if grade_sel != "All Grades":
-                query += " AND grade = ?"
+                query += " AND grade = %s"
                 params.append(grade_sel)
 
             section_sel = self.section_filter.currentText()
             if section_sel != "All Sections":
-                query += " AND section = ?"
+                query += " AND section = %s"
                 params.append(section_sel)
 
             query += " ORDER BY grade ASC, section ASC, full_name ASC"
 
-            cursor.execute(query, params)
+            cursor.execute(query, tuple(params))
             voters = cursor.fetchall()
             self.table.setRowCount(len(voters))
 
             voted_count = 0
             for row, voter in enumerate(voters):
-                id, username, full_name, grade, section, voted = voter
+                vid, username, full_name, grade, section, voted = voter
                 if voted: voted_count += 1
 
-                self.table.setItem(row, 0, QTableWidgetItem(username))
-                self.table.setItem(row, 1, QTableWidgetItem(full_name))
-                self.table.setItem(row, 2, QTableWidgetItem(grade))
-                self.table.setItem(row, 3, QTableWidgetItem(section))
+                self.table.setItem(row, 0, QTableWidgetItem(str(username)))
+                self.table.setItem(row, 1, QTableWidgetItem(str(full_name)))
+                self.table.setItem(row, 2, QTableWidgetItem(str(grade)))
+                self.table.setItem(row, 3, QTableWidgetItem(str(section)))
 
                 voted_item = QTableWidgetItem("✅ Yes" if voted else "❌ No")
                 voted_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                if voted:
-                    voted_item.setForeground(QBrush(QColor("#2ecc71")))
-                else:
-                    voted_item.setForeground(QBrush(QColor("#e74c3c")))
+                voted_item.setForeground(QBrush(QColor("#2ecc71" if voted else "#e74c3c")))
                 self.table.setItem(row, 4, voted_item)
 
-                # Actions
                 actions_widget = QWidget()
                 actions_layout = QHBoxLayout(actions_widget)
-
                 actions_layout.setContentsMargins(5, 5, 5, 5)
                 actions_layout.setSpacing(15)
-                actions_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
                 edit_btn = QPushButton("Edit")
                 edit_btn.setFixedSize(60, 30)
                 edit_btn.setStyleSheet(self.get_action_btn_style("#3498db", "#2980b9"))
-                edit_btn.clicked.connect(lambda checked, vid=id, vdata=voter: self.edit_voter(vid, vdata))
+                edit_btn.clicked.connect(lambda checked, v_id=vid, v_data=voter: self.edit_voter(v_id, v_data))
                 actions_layout.addWidget(edit_btn)
 
                 delete_btn = QPushButton("Delete")
                 delete_btn.setFixedSize(60, 30)
                 delete_btn.setStyleSheet(self.get_action_btn_style("#e74c3c", "#c0392b"))
-                delete_btn.clicked.connect(lambda checked, vid=id: self.delete_voter(vid))
+                delete_btn.clicked.connect(lambda checked, v_id=vid: self.delete_voter(v_id))
                 actions_layout.addWidget(delete_btn)
 
                 self.table.setCellWidget(row, 5, actions_widget)
@@ -591,6 +495,8 @@ class ManageVoters(QWidget):
             self.pending_count_label.setText(f"Pending: {len(voters) - voted_count}")
         except Exception as e:
             print(f"Error loading voters: {e}")
+        finally:
+            if cursor: cursor.close()
 
     def get_action_btn_style(self, color, hover):
         return f"""
@@ -603,74 +509,62 @@ class ManageVoters(QWidget):
         """
 
     def add_voter(self):
-        status = self.db.get_config('election_status')
-        if status == 'active':
-            QMessageBox.warning(self, "Action Restricted",
-                                "⛔ Cannot add voters while Election is LIVE.\nPlease stop the election first.")
+        if self.db.get_config('election_status') == 'active':
+            QMessageBox.warning(self, "Restricted", "⛔ Stop the election before adding voters.")
             return
 
         dialog = AddVoterDialog(self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             username, full_name, grade, section = dialog.get_data()
-
             if not username or not full_name:
-                QMessageBox.warning(self, "Missing Data", "Student ID and Full Name are required!")
+                QMessageBox.warning(self, "Error", "ID and Name are required!")
                 return
 
+            cursor = None
             try:
-                cursor = self.db.conn.cursor()
-                cursor.execute("SELECT id FROM users WHERE username=?", (username,))
+                cursor = self.db.conn.cursor(buffered=True)
+                cursor.execute("SELECT id FROM users WHERE username=%s", (username,))
                 if cursor.fetchone():
-                    QMessageBox.warning(self, "Duplicate Error", "A voter with this Student ID already exists!")
+                    QMessageBox.warning(self, "Error", "ID already exists!")
                     return
 
-                cursor.execute("SELECT id FROM users WHERE UPPER(full_name)=UPPER(?)", (full_name,))
+                cursor.execute("SELECT id FROM users WHERE UPPER(full_name)=UPPER(%s)", (full_name,))
                 if cursor.fetchone():
-                    QMessageBox.warning(self, "Duplicate Error", "A voter with this Full Name already exists!")
+                    QMessageBox.warning(self, "Error", "Name already exists!")
                     return
 
                 cursor.execute("""
-                               INSERT INTO users (username, password, role, full_name, grade, section)
-                               VALUES (?, ?, 'voter', ?, ?, ?)
-                               """, (username, username, full_name, grade, section))
+                    INSERT INTO users (username, password, role, full_name, grade, section)
+                    VALUES (%s, %s, 'voter', %s, %s, %s)
+                """, (username, username, full_name, grade, section))
                 self.db.conn.commit()
                 self.update_filter_options()
                 self.load_voters()
-                self.db.log_audit("admin", "Add", "Voters", f"Registered voter: {username}")
-                QMessageBox.information(self, "Success", "Voter registered successfully!")
+                self.db.log_audit("admin", "Add", "Voters", f"Registered: {username}")
+                QMessageBox.information(self, "Success", "Voter added!")
             except Exception as e:
-                QMessageBox.critical(self, "Database Error", f"Failed to add voter: {str(e)}")
+                QMessageBox.critical(self, "Error", str(e))
+            finally:
+                if cursor: cursor.close()
 
     def edit_voter(self, voter_id, voter_data):
-        status = self.db.get_config('election_status')
-        if status == 'active':
-            QMessageBox.warning(self, "Action Restricted",
-                                "⛔ Cannot edit voters while Election is LIVE.\nPlease stop the election first.")
+        if self.db.get_config('election_status') == 'active':
+            QMessageBox.warning(self, "Restricted", "⛔ Stop the election first.")
             return
-
         dialog = EditVoterDialog(self.db, voter_data)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.update_filter_options()
             self.load_voters()
 
     def delete_voter(self, voter_id):
-        status = self.db.get_config('election_status')
-        if status == 'active':
-            QMessageBox.warning(self, "Action Restricted",
-                                "⛔ Cannot delete voters while Election is LIVE.\nPlease stop the election first.")
+        if self.db.get_config('election_status') == 'active':
+            QMessageBox.warning(self, "Restricted", "⛔ Stop the election first.")
             return
-
-        reply = QMessageBox.question(self, "Confirm Delete",
-                                     "Are you sure you want to delete this voter?\n(It will be moved to the Archive/Recycle Bin)",
-                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        if reply == QMessageBox.StandardButton.Yes:
+        if QMessageBox.question(self, "Delete", "Move to Recycle Bin?") == QMessageBox.StandardButton.Yes:
             try:
-                # archive logic
                 self.db.archive_voter(voter_id)
-
                 self.update_filter_options()
                 self.load_voters()
                 self.db.log_audit("admin", f"Archived voter ID: {voter_id}")
-                QMessageBox.information(self, "Success", "Voter moved to Archive/Recycle Bin!")
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Failed to delete voter: {str(e)}")
+                QMessageBox.critical(self, "Error", str(e))
